@@ -51,33 +51,12 @@ async function deleteUrl(id) {
   ]);
 };
 
-async function getUserData(user) {
-  const { rows } = await pool.query(`
-  SELECT 
-    id,
-    "shortUrl",
-    url,
-    "visitCount"
-  FROM urls
-  WHERE "userId"=$1
-  ORDER BY id`, [user.id]);
-
-  const formattedData = {
-    id: user.id,
-    name: user.name,
-    visitCount: user.visitCount,
-    shortenedUrls: rows
-  };
-  return formattedData;
-};
-
 const urlRepository = {
   createUrl,
   getUrl,
   findShortUrl,
   updateCount,
-  deleteUrl,
-  getUserData
+  deleteUrl
 };
 
 export default urlRepository;
