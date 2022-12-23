@@ -39,4 +39,12 @@ export async function signIn(req, res) {
   } catch (e) {
     return res.sendStatus(500);
   }
-}
+};
+
+export async function getUserData(req, res) {
+  const user = (req.user)[0];
+
+  const data = await userRepository.getUserData(user);
+
+  return res.status(200).send(data);
+};

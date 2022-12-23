@@ -5,8 +5,6 @@ export async function authValidation(req, res, next) {
   const auth = req.headers.authorization;
   const token = auth?.replace('Bearer ', '');
 
-  console.log(token);
-
   if (!token)
     return res.status(401).send('Falha de autenticação');
 
@@ -15,13 +13,13 @@ export async function authValidation(req, res, next) {
 
     const sessionExists = session.length;
     if (!sessionExists)
-      return res.status(401).send('Sessão não encontrada');
+      return res.status(401).send('Falha de autenticação');
 
     const user = await userRepository.findUserId(session[0].userId);
 
     const userExists = user.length;
     if (!userExists)
-      return res.status(401).send('Usuário não encontrado');
+      return res.status(404).send('Usuário não encontrado');
 
     req.user = user;
   } catch (e) {
