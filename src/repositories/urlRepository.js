@@ -39,11 +39,20 @@ async function updateCount(url) {
   ]);
 };
 
+async function deleteUrl(id) {
+  return await pool.query(`
+  DELETE FROM urls
+  WHERE id=$1`, [
+    id
+  ]);
+};
+
 const urlRepository = {
   createUrl,
   getUrl,
   findShortUrl,
-  updateCount
+  updateCount,
+  deleteUrl
 };
 
 export default urlRepository;

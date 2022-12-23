@@ -1,6 +1,6 @@
 import { urlSchema } from "../schema/url.js";
 
-export async function urlValidation(req, res, next) {
+export async function createUrlValidation(req, res, next) {
   const body = req.body;
 
   try {
