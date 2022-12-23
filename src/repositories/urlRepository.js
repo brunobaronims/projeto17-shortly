@@ -12,7 +12,11 @@ async function createUrl(data) {
 
 async function getUrl(id) {
   const { rows } = await pool.query(`
-  SELECT * FROM urls
+  SELECT 
+  id,
+  "shortUrl",
+  url
+  FROM urls
   WHERE id=$1`, [
     id
   ]);

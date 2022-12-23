@@ -27,13 +27,7 @@ export async function shortenUrl(req, res) {
 export async function getUrl(req, res) {  
   const urlData = req.urlData;
 
-  const formattedData = {
-    id: urlData.id,
-    shortUrl: urlData.shortUrl,
-    url: urlData.url
-  };
-
-  return res.status(200).send(formattedData);
+  return res.status(200).send(urlData);
 
 };
 
