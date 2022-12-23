@@ -3,6 +3,7 @@ import { stripHtml } from 'string-strip-html';
 import { nanoid } from 'nanoid/async';
 
 import userRepository from "../repositories/userRepository.js";
+import urlRepository from '../repositories/urlRepository.js';
 import sessionRepository from '../repositories/sessionRepository.js';
 
 export async function signUp(req, res) {
@@ -44,7 +45,13 @@ export async function signIn(req, res) {
 export async function getUserData(req, res) {
   const user = (req.user)[0];
 
-  const data = await userRepository.getUserData(user);
+  const data = await urlRepository.getUserData(user);
 
   return res.status(200).send(data);
+};
+
+export async function getUserRanking(req, res) {
+  const ranking = await userRepository.getUserRanking();
+
+  return res.status(200).send(ranking);
 };

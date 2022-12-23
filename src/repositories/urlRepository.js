@@ -21,14 +21,14 @@ async function getUrl(id) {
 };
 
 async function findShortUrl(url) {
-  const longUrl = (await pool.query(`
+  const urlData = await pool.query(`
   SELECT * FROM urls
   WHERE "shortUrl"=$1`, [
     url
-  ])).rows[0].url;
+  ]);
 
-  return longUrl;
-}
+  return urlData;
+};
 
 async function updateCount(url) {
   return await pool.query(`
@@ -47,12 +47,33 @@ async function deleteUrl(id) {
   ]);
 };
 
+async function getUserData(user) {
+  const { rows } = await pool.query(`
+  SELECT 
+    id,
+    "shortUrl",
+    url,
+    "visitCount"
+  FROM urls
+  WHERE "userId"=$1
+  ORDER BY id`, [user.id]);
+
+  const formattedData = {
+    id: user.id,
+    name: user.name,
+    visitCount: user.visitCount,
+    shortenedUrls: rows
+  };
+  return formattedData;
+};
+
 const urlRepository = {
   createUrl,
   getUrl,
   findShortUrl,
   updateCount,
-  deleteUrl
+  deleteUrl,
+  getUserData
 };
 
 export default urlRepository;

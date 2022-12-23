@@ -2,6 +2,7 @@ import { stripHtml } from "string-strip-html";
 import { nanoid } from "nanoid/async";
 
 import urlRepository from "../repositories/urlRepository.js";
+import userRepository from "../repositories/userRepository.js";
 
 export async function shortenUrl(req, res) {
   const body = await req.body;
@@ -15,6 +16,7 @@ export async function shortenUrl(req, res) {
 
   try {
     await urlRepository.createUrl(data);
+    await userRepository.increaseLinkCount(await req.user[0].id);
   } catch (e) {
     return res.sendStatus(500);
   }
@@ -39,11 +41,13 @@ export async function redirectUrl(req, res) {
   const shortUrl = req.params.shortUrl;
 
   try {
-    const url = await urlRepository.findShortUrl(shortUrl);
+    const urlData = (await urlRepository.findShortUrl(shortUrl)).rows[0];
 
+    const url = urlData.url;
     if (!url)
       return res.sendStatus(404);
-
+    
+    await userRepository.increaseVisitCount(urlData.userId);
     await urlRepository.updateCount(shortUrl);
     return res.redirect(url);
   } catch (e) {
@@ -60,6 +64,7 @@ export async function deleteUrl(req, res) {
 
   try {
     await urlRepository.deleteUrl(urlData.id)
+    await userRepository.decreaseLinkCount(user.id);
 
     return res.sendStatus(204);
   } catch (e) {

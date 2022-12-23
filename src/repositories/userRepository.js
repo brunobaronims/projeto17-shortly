@@ -18,7 +18,7 @@ async function findUserId(id) {
   ]);
 
   return rows;
-}
+};
 
 async function createUser(user) {
   return await pool.query(
@@ -30,41 +30,56 @@ async function createUser(user) {
   ]);
 };
 
-async function getUserData(user) {
+async function increaseLinkCount(id) {
+  return await pool.query(`
+  UPDATE users
+  SET "linksCount"="linksCount" + 1
+  WHERE id=$1`, [
+    id
+  ]);
+};
+
+async function decreaseLinkCount(id) {
+  return await pool.query(`
+  UPDATE users
+  SET "linksCount"="linksCount" - 1
+  WHERE id=$1`, [
+    id
+  ]);
+};
+
+async function increaseVisitCount(id) {
+  return await pool.query(`
+  UPDATE users
+  SET "visitCount"="visitCount" + 1
+  WHERE id=$1`, [
+    id
+  ]);
+};
+
+async function getUserRanking() {
   const { rows } = await pool.query(`
-  SELECT * FROM urls
-  WHERE "userId"=$1
-  ORDER BY id`, [user.id]);
-  const formattedRows = rows.map(r => {
-    const {
-      createdAt,
-      userId,
-      ...newRow
-    } = r;
+  SELECT 
+  id,
+  name,
+  "linksCount",
+  "visitCount"
+  FROM users
+  ORDER BY "visitCount" DESC
+  LIMIT 10`
+  );
 
-    return newRow;
-  });
-
-  const sum = (await pool.query(`
-  SELECT sum("visitCount")
-  FROM urls
-  WHERE "userId"=$1`, [user.id]
-  )).rows[0].sum;
-
-  const formattedData = {
-    id: user.id,
-    name: user.name,
-    visitCount: sum,
-    shortenedUrls: formattedRows
-  };
-  return formattedData;
+  return rows;
 };
 
 const userRepository = {
   findEmail,
   findUserId,
   createUser,
-  getUserData
+  increaseVisitCount,
+  increaseLinkCount,
+  decreaseLinkCount,
+  getUserRanking
 };
 
 export default userRepository;
