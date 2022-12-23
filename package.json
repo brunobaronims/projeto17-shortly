@@ -8,7 +8,7 @@
     "joi": "^17.7.0",
     "nanoid": "^4.0.0",
     "pg": "^8.8.0",
-    "string-strip-html": "^13.0.2"
+    "string-strip-html": "12.0.0"
   },
   "type": "module"
 }
